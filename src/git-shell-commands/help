@@ -1,0 +1,10 @@
+#!/bin/bash -e
+echo '
+
+git-shell...
+
+help   - this screen
+new    - create new repository
+delete     - delete existing repository
+list   - list the repositories in the server
+'

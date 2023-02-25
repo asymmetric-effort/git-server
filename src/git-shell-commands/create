@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+echo "creating ${1}"
+# shellcheck disable=SC2001
+repo="""/git/repos/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
+if [[ ! -d "${repo}" ]]; then
+  mkdir -p "${repo}"
+  cd "${repo}"
+
+  git init --bare
+  echo "${1} created"
+  exit 1
+else
+  echo "repo '${1}' already exists"
+  exit 0
+fi

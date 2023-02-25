@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+echo "git repo delete...."
+# shellcheck disable=SC2001
+repo="""/git/repos/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
+
+if [[ -d "${repo}" ]]; then
+  echo "removing ${1}"
+  rm -rf "${repo}"
+  exit 0
+else
+  echo "no repo exists named ${1}"
+  exit 1
+fi

@@ -1,6 +1,6 @@
 #!/bin/bash -e
+
 find /git/repos/ -type d -name "*.git" | \
   sed -e 's/^\/git\/repos\///' | \
   sed -e 's/\.git$//' | \
   sed '/^[[:space:]]*$/d'
-echo ''

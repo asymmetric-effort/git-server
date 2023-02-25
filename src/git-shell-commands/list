@@ -1,7 +1,6 @@
 #!/bin/bash -e
-
-echo 'Current Repositories'
-echo '--------------------'
-find /git/repos/ -type d -name "*.git" | sed -e 's/^\/git\/repos\///' | sed -e 's/\.git$//'
-echo '--------------------'
+find /git/repos/ -type d -name "*.git" | \
+  sed -e 's/^\/git\/repos\///' | \
+  sed -e 's/\.git$//' | \
+  sed '/^[[:space:]]*$/d'
 echo ''

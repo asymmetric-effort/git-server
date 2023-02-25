@@ -7,6 +7,7 @@ git_server/initialize:
 REMOTE_IMAGE:=$(DOCKER_HUB)/$(GIT_SERVER_DOCKER_IMAGE_NAME)
 git_server/run: git_server/initialize
 	@echo "$@ starting."
+	docker kill $(GIT_SERVER_DOCKER_CONTAINER_NAME) &> /dev/null || true \
 	docker run -d \
 			   --rm \
 			   --name $(GIT_SERVER_DOCKER_CONTAINER_NAME) \
@@ -19,6 +20,7 @@ git_server/run: git_server/initialize
 LOCAL_IMAGE:=$(GIT_SERVER_DOCKER_IMAGE_NAME)
 git_server/run/local: git_server/initialize
 	@echo "$@ starting."
+	docker kill $(GIT_SERVER_DOCKER_CONTAINER_NAME) &> /dev/null || true \
 	docker run -d \
 			   --rm \
 			   --name $(GIT_SERVER_DOCKER_CONTAINER_NAME) \

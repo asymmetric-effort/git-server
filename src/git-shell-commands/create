@@ -9,8 +9,8 @@ if [[ ! -d "${repo}" ]]; then
 
   git init --bare
   echo "${1} created"
-  exit 1
+  exit 0
 else
   echo "repo '${1}' already exists"
-  exit 0
+  exit 1
 fi

@@ -1,0 +1,21 @@
+#!/bin/bash -e
+
+echo "rename ${1} to ${2}"
+# shellcheck disable=SC2001
+old_repo="""/git/repos/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
+new_repo="""/git/repos/$(echo "${2}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
+
+if [[ -d "${new_repo}" ]]; then
+  echo "repo '${2}' already exists"
+  exit 1
+fi
+
+mkdir -p "$(dirname ${new_repo})" || {
+  echo "new repo path creation failed for ${new_repo}"
+  exit 2
+}
+mv "${old_repo}" "${new_repo}" || {
+  echo "repo move/rename failed for ${new_repo}}"
+  exit 3
+}
+echo ""

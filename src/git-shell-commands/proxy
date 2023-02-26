@@ -1,0 +1,52 @@
+#!/bin/bash -e
+
+GIT_ROOT="/git/repos"
+
+if [[ "${1}" == "--init" ]]; then
+  echo "initializing proxy-clone"
+  ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_rsa <<<y >/dev/null 2>&1
+  chown git:root -R ~/.ssh/id_rsa*
+  chmod 0400 ~/.ssh/id_rsa
+  echo "SSH Key:"
+  echo "  $(cat "${HOME}/.ssh/id_rsa.pub")"
+  echo ""
+  exit 0
+else
+  if [[ -f ${HOME}/.ssh/id_rsa.pub ]]; then
+    (
+      remote_repo="${1}"
+      regex="^git@[^:]+:[^/]+/[^.]+(\.git)?$"
+      if [[ "${remote_repo}" =~ ${regex} ]]; then
+        echo "creating ${remote_repo} as a proxy-clone repo"
+        cd "${GIT_ROOT}" || exit 1
+        GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no" git clone --bare ${remote_repo} || {
+          echo ""
+          echo "proxy-clone failed."
+          echo ""
+          echo "Your proxy server has an ssh key.  Be sure the following"
+          echo "public key has been uploaded to the remote git server and"
+          echo "that you have permissions for the repository you intend"
+          echo "to proxy."
+          echo ""
+          echo "SSH Key:"
+          echo "  $(cat "${HOME}/.ssh/id_rsa.pub")"
+          echo ""
+          exit 2
+        }
+      else
+        echo "Git repositories can only be proxy-cloned by this project using ssh."
+        exit 10
+      fi
+    )
+  else
+    echo ""
+    echo "git proxy is not initialized"
+    echo ""
+    echo "The proxy server has not been initialized or its ssh key is"
+    echo "not found.  Use 'git proxy --init' to initialize a new key."
+    echo "Then you will be able to upload that key to whatever remote"
+    echo "git server you intend to proxy."
+    echo ""
+    exit 3
+  fi
+fi

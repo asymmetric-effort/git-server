@@ -5,9 +5,27 @@ echo "rename ${1} to ${2}"
 old_repo="""/git/repos/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
 new_repo="""/git/repos/$(echo "${2}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
 
-if [[ -d "${new_repo}" ]]; then
-  echo "repo '${2}' already exists"
-  exit 1
+
+regex="^/git/repos/[a-zA-Z0-9]+([-_.\/][a-zA-Z0-9]+)*[a-zA-Z0-9].git$"
+
+if [[ ${old_repo} =~ $regex ]]; then
+  if [[ ! -d "${old_repo}" ]]; then
+    echo "repo '${1}' not found"
+    exit 11
+  fi
+else
+  echo "source repo (${old_repo}) is invalid"
+  exit 10
+fi
+
+if [[ ${new_repo} =~ $regex ]]; then
+  if [[ -d "${new_repo}" ]]; then
+    echo "repo '${2}' already exists"
+    exit 21
+  fi
+else
+  echo "source repo (${new_repo}) is invalid"
+  exit 20
 fi
 
 mkdir -p "$(dirname ${new_repo})" || {
@@ -18,4 +36,5 @@ mv "${old_repo}" "${new_repo}" || {
   echo "repo move/rename failed for ${new_repo}}"
   exit 3
 }
+
 echo ""

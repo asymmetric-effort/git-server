@@ -3,8 +3,14 @@ echo '
 
 git-shell...
 
-help   - this screen
-new    - create new repository
+authorize  - authorize a new ssh key
+authorized - return the enumerated list of ssh keys
+create     - create a new repo
 delete     - delete existing repository
-list   - list the repositories in the server
+help       - this screen
+list       - list the repositories in the server
+proxy      - clone a remote repository to this server as a proxy
+push-proxy - push changes in this server to the remote proxied repository
+rename     - rename a repository.
+
 '

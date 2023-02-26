@@ -6,7 +6,6 @@ export SSH_KEY=""
 while [[ $# -gt 0 ]]; do
   case "${1}" in
   --sshkey)
-    echo "SSHKEY detected (remaining: ${#})"
     [[ "${2}" == "" ]] && echo "expected ssh algorithm missing" && exit 20
     [[ "${3}" == "" ]] && echo "expected ssh key missing" && exit 22
     [[ "${4}" == "" ]] && echo "expected ssh suffix missing" && exit 22
@@ -16,7 +15,6 @@ while [[ $# -gt 0 ]]; do
     shift # past value
     ;;
   --debug)
-    echo "DEBUG mode active (remaining: ${#})"
     export DEBUG_FLAG="--debug"
     shift # past argument
     [[ $# -gt 0 ]] && shift # past value

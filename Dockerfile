@@ -2,7 +2,8 @@ FROM ubuntu:latest AS base
 
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends ca-certificates apt-transport-https nginx git openssh-server
+    apt-get install -y --no-install-recommends ca-certificates apt-transport-https \
+                                               nginx git openssh-server python3
 
 RUN echo "$(which git-shell)" >> /etc/shells
 RUN rm -rf /var/www

@@ -1,16 +1,68 @@
 #!/bin/bash -e
 
-echo "creating ${1}"
-# shellcheck disable=SC2001
-repo="""/git/repos/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
-if [[ ! -d "${repo}" ]]; then
-  mkdir -p "${repo}"
-  cd "${repo}"
+export DEBUG_FLAG=""
+export REPO_NAME=""
 
-  git init --bare
-  echo "${1} created"
-  exit 0
+while [[ $# -gt 0 ]]; do
+  case "${1}" in
+  --repo)
+    export REPO_NAME="${2}"
+    shift # past argument
+    shift # past value
+    ;;
+  --debug)
+    export DEBUG_FLAG="--debug"
+    shift                   # past argument
+    [[ $# -gt 0 ]] && shift # past value
+    ;;
+  --*)
+    echo "Unknown option ${1}"
+    exit 1
+    ;;
+  *)
+    shift # past argument
+    ;;
+  esac
+done
+
+if [[ "${REPO_NAME}_" == "_" ]]; then
+  echo "Missing or empty REPO_NAME"
+  exit 99
+fi
+
+#
+# Regular expression (regex):
+# ---------------------------
+#   Uses (?!\.\.\/|\/\.\.|..) as a look-ahead assertion
+#   and (?<!\.\.) as a look-behind assertion to prevent
+#   directory traversal
+#
+#   We require repository names to start with a letter (a-zA-Z)
+#   We allow the repository name to contain alphanumeric or
+#   the symbols '/', '-', '_' or '.' provided this does not
+#   violate the above look-ahead/behind rules.
+#
+#   We require that repository names end with an alphanumeric
+#   character.  Thus, in total we require at least three (3)
+#   characters for a valid repository name.
+#
+
+regex="^[a-zA-Z0-9]+([-_.\/][a-zA-Z0-9]+)*[a-zA-Z0-9]$"
+
+echo "REPO_NAME:'${REPO_NAME}'"
+if [[ ${REPO_NAME} =~ $regex ]]; then
+  echo "creating ${REPO_NAME}"
+  repo="/git/repos/${REPO_NAME}.git"
+  if [[ ! -d "${repo}" ]]; then
+    mkdir -p "${repo}"
+    cd "${repo}"
+    git init --bare
+    echo "${REPO_NAME} created"
+    exit 0
+  else
+    echo "repo '${REPO_NAME}' already exists"
+    exit 1
+  fi
 else
-  echo "repo '${1}' already exists"
-  exit 1
+  echo "invalid repository name: ${REPO_NAME}"
 fi

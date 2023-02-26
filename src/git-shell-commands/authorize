@@ -1,20 +1,40 @@
 #!/bin/bash -e
-AUTHORIZED_KEYS_FILE=/git/.ssh/authorized_keys
-SUPPORTED_ALGORITHMS="ssh-rsa|ssh-dss|ecdsa-sha2-nistp256|ecdsa-sha2-nistp384|ecdsa-sha2-nistp521|ssh-ed25519"
-regex="^((${SUPPORTED_ALGORITHMS}) AAAA[0-9A-Za-z+/]+[=]{0,3}( [^@]+@[^@]+)?)"
 
-public_key="${1}"
+export DEBUG_FLAG=""
+export SSH_KEY=""
 
-if [[ $public_key =~ $regex ]]; then
-  echo "${public_key}" >>"${AUTHORIZED_KEYS_FILE}"
-  exit 0
-else
-  echo "Invalid public ssh key"
-  echo ""
-  echo "Be sure to use a supported algorithm.  The following are supported."
-  for alg in $(echo ${SUPPORTED_ALGORITHMS} | tr '|' ' '); do
-    echo "  ${alg}"
-  done
-  echo ""
-  exit 1
+while [[ $# -gt 0 ]]; do
+  case "${1}" in
+  --sshkey)
+    echo "SSHKEY detected (remaining: ${#})"
+    [[ "${2}" == "" ]] && echo "expected ssh algorithm missing"
+    [[ "${3}" == "" ]] && echo "expected ssh key missing"
+    [[ "${4}" == "" ]] && echo "expected ssh suffix missing"
+    export SSHKEY="${2} ${3} ${4}"
+    echo "SSHKEY: ${SSHKEY}"
+    shift # past argument
+    shift # past value
+    ;;
+  --debug)
+    echo "DEBUG mode active (remaining: ${#})"
+    export DEBUG_FLAG="--debug"
+    shift # past argument
+    [[ $# -gt 0 ]] && shift # past value
+    ;;
+  --*)
+    echo "Unknown option ${1}"
+    exit 1
+    ;;
+  *)
+    shift # past argument
+    ;;
+  esac
+done
+
+if [[ "${DEBUG_FLAG}" == "--debug" ]]; then
+  echo "operation: 'proxy', name: '${1}'  (this: $0)"
 fi
+
+/git/git-shell-commands/authorize.py ${DEBUG_FLAG} --sshkey "${SSHKEY}"
+
+exit $?

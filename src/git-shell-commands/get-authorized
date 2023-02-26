@@ -1,0 +1,16 @@
+#!/bin/bash -e
+AUTHORIZED_KEYS_FILE=/git/.ssh/authorized_keys
+if [[ -f "${AUTHORIZED_KEYS_FILE}" ]]; then
+  echo "The following authorized keys have been registered with the server:"
+  i=0
+  while IFS= read -r line; do
+    echo " "
+    echo "${i}: ${line} "
+    i=$((i+1))
+  done < "${AUTHORIZED_KEYS_FILE}"
+  echo " "
+  exit 0
+else
+  echo "No authorized keys file found (${AUTHORIZED_KEYS_FILE})"
+  exit 1
+fi

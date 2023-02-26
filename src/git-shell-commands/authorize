@@ -7,9 +7,9 @@ while [[ $# -gt 0 ]]; do
   case "${1}" in
   --sshkey)
     echo "SSHKEY detected (remaining: ${#})"
-    [[ "${2}" == "" ]] && echo "expected ssh algorithm missing"
-    [[ "${3}" == "" ]] && echo "expected ssh key missing"
-    [[ "${4}" == "" ]] && echo "expected ssh suffix missing"
+    [[ "${2}" == "" ]] && echo "expected ssh algorithm missing" && exit 20
+    [[ "${3}" == "" ]] && echo "expected ssh key missing" && exit 22
+    [[ "${4}" == "" ]] && echo "expected ssh suffix missing" && exit 22
     export SSHKEY="${2} ${3} ${4}"
     echo "SSHKEY: ${SSHKEY}"
     shift # past argument
@@ -33,6 +33,11 @@ done
 
 if [[ "${DEBUG_FLAG}" == "--debug" ]]; then
   echo "operation: 'proxy', name: '${1}'  (this: $0)"
+fi
+
+if [[ "${SSHKEY}" == "" ]]; then
+  echo "missing ssh key"
+  exit 99
 fi
 
 /git/git-shell-commands/authorize.py ${DEBUG_FLAG} --sshkey "${SSHKEY}"

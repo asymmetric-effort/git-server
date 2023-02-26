@@ -4,20 +4,15 @@ BASE_DIR="/git/repos"
 
 echo "git repo delete...."
 # shellcheck disable=SC2001
-repo="""${BASE_DIR}/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g')"""
+repo="""${BASE_DIR}/$(echo "${1}" | sed -e 's/\.\.//g' | sed -e 's/\/\//\//g').git"""
 
-if [[ -d "${repo}.git" ]]; then
+if [[ -d "${repo}" ]]; then
   echo "removing ${1}"
-  here="${repo}"
-  while [[ "${here}" != "${BASE_DIR}" ]]; do
-    echo "removing ${here}"
-    rm -rf "${here}" || exit 2
-    rm -rf "${here}.git" || exit 3
-    echo "here: ${here}"
-    here="""$(dirname "${here}")"""
-  done
+  rm -rf "${repo}" || exit 3
+  find /git/repos/ -type d -not -path '*/*.git/*' -empty -delete
   exit 0
 else
   echo "no repo exists named ${1}"
   exit 1
 fi
+

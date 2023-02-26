@@ -57,3 +57,31 @@ To stop the git server, run `make git_server/stop`
 
 ## Tailing logs of running services
 To tail the logs, run `make git_server/logs`
+
+## Git-Shell Custom Commands
+### `git authorize <key string>`
+  Allow the user to add an ssh key to the `~/.ssh/authorized_keys` file.
+
+### `git authorized`
+  Return the enumerated list of keys in `~/.ssh/authorized_keys`.
+
+### `git create <repo>`
+  Create a new empty git repository
+  
+### `git delete <repo>`
+  Delete a git repository
+   
+### `git help`
+  Show help content
+
+### `git list`
+  List the repositories in the server
+
+### `git proxy`
+  Clone a remote repository to this server as a proxy
+
+### `git push-proxy`
+  Push changes in this server to the remote proxied repository
+
+### `git rename`
+  Rename a repository
